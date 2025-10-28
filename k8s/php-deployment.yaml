@@ -1,0 +1,38 @@
+# Deployment da aplicação PHP
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: php 
+spec:
+  # Uma instância do app PHP
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: php
+    template: 
+      metadata: 
+        labels: 
+          app: php
+    spec: 
+      containers: 
+        - name: php 
+        # Imagem customizada que você criou
+          image: gama404/biblioteca_php:v1
+          ports: 
+            # Apache ou PHP embutido escutando na porta 80
+            - containerPort: 80
+---
+
+# Service para expor o app PHP para fora do cluster (NodePort)
+apiVersion: v1
+kind: Service
+metadata: 
+  name: php
+spec: 
+  type: NodePort # Permite acesso via porta do host
+  ports: 
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+  selector: 
+    app: php
